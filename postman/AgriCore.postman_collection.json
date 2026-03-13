@@ -1,0 +1,224 @@
+{
+  "info": {
+    "name": "AgriCore API",
+    "_postman_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "description": "Complete API collection for the AgriCore Authentication & Authorization System.\n\n**Base URL:** `{{baseUrl}}`\n\n**Auth:** All protected endpoints read the `agricore_token` HttpOnly cookie automatically set on login.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:5000/api", "type": "string" }
+  ],
+  "item": [
+    {
+      "name": "Health",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "http://localhost:5000/health", "protocol": "http", "host": ["localhost"], "port": "5000", "path": ["health"] },
+            "description": "Verify the server is running."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Register (Customer)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/auth/register", "host": ["{{baseUrl}}"], "path": ["auth", "register"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"John Doe\",\n  \"email\": \"john@example.com\",\n  \"password\": \"SecurePass@123\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "description": "Register a new Customer account. Returns user data and sets the `agricore_token` HttpOnly cookie."
+          }
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/auth/login", "host": ["{{baseUrl}}"], "path": ["auth", "login"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@agricore.com\",\n  \"password\": \"Admin@123456\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "description": "Login with email/password. Sets `agricore_token` cookie on success."
+          }
+        },
+        {
+          "name": "Login (Customer)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/auth/login", "host": ["{{baseUrl}}"], "path": ["auth", "login"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"customer@agricore.com\",\n  \"password\": \"Customer@123456\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "description": "Login as the seeded Customer user."
+          }
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "url": { "raw": "{{baseUrl}}/auth/logout", "host": ["{{baseUrl}}"], "path": ["auth", "logout"] },
+            "description": "Clears the `agricore_token` cookie. No body required."
+          }
+        },
+        {
+          "name": "Get Current User (/me)",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/auth/me", "host": ["{{baseUrl}}"], "path": ["auth", "me"] },
+            "description": "Returns the authenticated user's profile. Requires valid `agricore_token` cookie."
+          }
+        },
+        {
+          "name": "Google OAuth — Initiate",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/auth/google", "host": ["{{baseUrl}}"], "path": ["auth", "google"] },
+            "description": "Open this URL in a browser to start the Google OAuth 2.0 flow. Redirects to Google login page."
+          }
+        }
+      ]
+    },
+    {
+      "name": "User",
+      "item": [
+        {
+          "name": "Get Profile",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/users/profile", "host": ["{{baseUrl}}"], "path": ["users", "profile"] },
+            "description": "Get the authenticated user's profile. Requires JWT cookie."
+          }
+        },
+        {
+          "name": "Update Profile",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/users/profile", "host": ["{{baseUrl}}"], "path": ["users", "profile"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"John Updated\",\n  \"email\": \"john.updated@example.com\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "description": "Update name and/or email. Requires JWT cookie."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin",
+      "item": [
+        {
+          "name": "Get All Users",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/admin/users", "host": ["{{baseUrl}}"], "path": ["admin", "users"] },
+            "description": "List all users. Requires Admin JWT cookie."
+          }
+        },
+        {
+          "name": "Get User by ID",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/admin/users/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "users", "1"]
+            },
+            "description": "Get a specific user by their ID. Requires Admin JWT cookie."
+          }
+        },
+        {
+          "name": "Delete User",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/admin/users/2",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "users", "2"]
+            },
+            "description": "Delete a user by ID. Requires Admin JWT cookie. Cannot delete own account."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Error Cases",
+      "item": [
+        {
+          "name": "Register — Duplicate Email (409)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/auth/register", "host": ["{{baseUrl}}"], "path": ["auth", "register"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Admin Copy\",\n  \"email\": \"admin@agricore.com\",\n  \"password\": \"SecurePass@123\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "description": "Should return 409 Conflict."
+          }
+        },
+        {
+          "name": "Login — Wrong Password (401)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/auth/login", "host": ["{{baseUrl}}"], "path": ["auth", "login"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@agricore.com\",\n  \"password\": \"WrongPassword\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "description": "Should return 401 Unauthorized."
+          }
+        },
+        {
+          "name": "Protected Route — No Token (401)",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/users/profile", "host": ["{{baseUrl}}"], "path": ["users", "profile"] },
+            "description": "Should return 401 when no cookie is sent."
+          }
+        },
+        {
+          "name": "Admin Route — Customer Access (403)",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/admin/users", "host": ["{{baseUrl}}"], "path": ["admin", "users"] },
+            "description": "Log in as Customer first, then call this. Should return 403 Forbidden."
+          }
+        },
+        {
+          "name": "Validation Error — Weak Password (400)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/auth/register", "host": ["{{baseUrl}}"], "path": ["auth", "register"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Test User\",\n  \"email\": \"test@example.com\",\n  \"password\": \"weak\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "description": "Should return 400 with validation errors."
+          }
+        }
+      ]
+    }
+  ]
+}
