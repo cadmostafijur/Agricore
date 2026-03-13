@@ -5,7 +5,7 @@ export default defineConfig({
   schema: 'prisma/schema.prisma',
   migrations: {
     path: 'prisma/migrations',
-    seed: 'ts-node --transpile-only --compiler-options {"module":"CommonJS"} prisma/seed.ts',
+    seed: 'tsx prisma/seed.ts',
   },
   datasource: {
     // Allow `prisma generate` to run in environments where DATABASE_URL
