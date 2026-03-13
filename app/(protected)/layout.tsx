@@ -7,7 +7,8 @@ import Sidebar from '@/components/layout/Sidebar';
 
 export default function ProtectedLayout({ children }: { children: React.ReactNode }) {
   const { isLoading } = useAuth();
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);        // mobile
+  const [desktopOpen, setDesktopOpen] = useState(true);         // desktop
 
   if (isLoading) {
     return (
@@ -22,9 +23,26 @@ export default function ProtectedLayout({ children }: { children: React.ReactNod
 
   return (
     <div className="flex min-h-screen bg-gray-50">
-      <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-      <div className="flex flex-col flex-1 overflow-hidden">
-        <Navbar onMenuClick={() => setSidebarOpen(true)} />
+      {/* Desktop sidebar */}
+      {desktopOpen && (
+        <div className="hidden lg:flex w-64 flex-shrink-0 border-r border-gray-100">
+          <Sidebar open={false} onClose={() => setDesktopOpen(false)} />
+        </div>
+      )}
+
+      {/* Mobile sidebar overlay */}
+      {sidebarOpen && (
+        <div className="lg:hidden">
+          <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} mobileOnly />
+        </div>
+      )}
+
+      <div className="flex flex-col flex-1 overflow-hidden min-w-0">
+        <Navbar
+          onMenuClick={() => setSidebarOpen(true)}
+          onDesktopMenuClick={() => setDesktopOpen((v) => !v)}
+          desktopSidebarOpen={desktopOpen}
+        />
         <main className="flex-1 overflow-y-auto p-6 lg:p-8">{children}</main>
       </div>
     </div>

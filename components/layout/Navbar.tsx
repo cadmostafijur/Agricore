@@ -2,9 +2,17 @@
 
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
-import { LogOut, Bell, Menu } from 'lucide-react';
+import { LogOut, Bell, Menu, PanelLeftClose, PanelLeft } from 'lucide-react';
 
-export default function Navbar({ onMenuClick }: { onMenuClick?: () => void }) {
+export default function Navbar({
+  onMenuClick,
+  onDesktopMenuClick,
+  desktopSidebarOpen,
+}: {
+  onMenuClick?: () => void;
+  onDesktopMenuClick?: () => void;
+  desktopSidebarOpen?: boolean;
+}) {
   const { logout } = useAuth();
   const router = useRouter();
 
@@ -15,26 +23,37 @@ export default function Navbar({ onMenuClick }: { onMenuClick?: () => void }) {
 
   return (
     <header className="h-16 bg-white border-b border-gray-100 flex items-center justify-between px-6 flex-shrink-0">
-      {/* Left: mobile hamburger */}
-      <button
-        onClick={onMenuClick}
-        className="lg:hidden text-gray-500 hover:text-gray-700 transition-colors"
-        aria-label="Open menu"
-      >
-        <Menu className="w-5 h-5" />
-      </button>
-      <div className="hidden lg:block" />
+      <div className="flex items-center gap-2">
+        {/* Desktop sidebar toggle */}
+        <button
+          onClick={onDesktopMenuClick}
+          className="hidden lg:flex text-gray-400 hover:text-gray-700 transition-colors p-1.5 rounded-lg hover:bg-gray-100"
+          aria-label="Toggle sidebar"
+          title="Toggle sidebar"
+        >
+          {desktopSidebarOpen
+            ? <PanelLeftClose className="w-5 h-5" />
+            : <PanelLeft className="w-5 h-5" />}
+        </button>
+        {/* Mobile hamburger */}
+        <button
+          onClick={onMenuClick}
+          className="lg:hidden text-gray-500 hover:text-gray-700 transition-colors p-1.5 rounded-lg hover:bg-gray-100"
+          aria-label="Open menu"
+        >
+          <Menu className="w-5 h-5" />
+        </button>
+      </div>
 
       {/* Right: actions only */}
       <div className="flex items-center gap-3">
-        <button className="text-gray-400 hover:text-gray-600 transition-colors relative" aria-label="Notifications">
+        <button className="text-gray-400 hover:text-gray-600 transition-colors relative p-1.5 rounded-lg hover:bg-gray-100" aria-label="Notifications">
           <Bell className="w-5 h-5" />
         </button>
-
         <button
           onClick={handleLogout}
           title="Log out"
-          className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-red-600 transition-colors"
+          className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-red-600 transition-colors px-3 py-1.5 rounded-lg hover:bg-red-50"
         >
           <LogOut className="w-4 h-4" />
           <span className="hidden sm:block">Logout</span>

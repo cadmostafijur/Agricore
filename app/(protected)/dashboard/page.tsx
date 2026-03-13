@@ -13,7 +13,7 @@ import Image from 'next/image';
 import clsx from 'clsx';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
-interface Field { id: number; name: string; district: string; area_ha?: number; crops: unknown[]; reports: unknown[] }
+interface FieldModel { id: number; name: string; district: string; area_ha?: number; crops: unknown[]; reports: unknown[] }
 interface Crop  { id: number; name: string; status: string; field: { name: string; district: string } }
 interface Report { id: number; title: string; type: string; created_at: string; field?: { name: string } }
 interface TeamMember { id: number; name: string; email: string; role: string }
@@ -38,7 +38,7 @@ function Modal({ title, onClose, children }: { title: string; onClose: () => voi
 }
 
 // ─── Form field helper ────────────────────────────────────────────────────────
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
+function FormRow({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div className="space-y-1">
       <label className="text-xs font-medium text-gray-500 uppercase tracking-wide">{label}</label>
@@ -53,7 +53,7 @@ const btnPrimary = 'w-full py-2.5 bg-primary-600 text-white text-sm font-semibol
 export default function DashboardPage() {
   const { user } = useAuth();
 
-  const [fields,  setFields]  = useState<Field[]>([]);
+  const [fields,  setFields]  = useState<FieldModel[]>([]);
   const [crops,   setCrops]   = useState<Crop[]>([]);
   const [reports, setReports] = useState<Report[]>([]);
   const [team,    setTeam]    = useState<TeamMember[]>([]);
@@ -71,7 +71,7 @@ export default function DashboardPage() {
     setLoading(true);
     try {
       const [f, c, r, t] = await Promise.all([
-        api.get<{ data: { fields: Field[] } }>('/fields'),
+        api.get<{ data: { fields: FieldModel[] } }>('/fields'),
         api.get<{ data: { crops: Crop[] } }>('/crops'),
         api.get<{ data: { reports: Report[] } }>('/reports'),
         api.get<{ data: { members: TeamMember[] } }>('/team'),
@@ -312,9 +312,9 @@ export default function DashboardPage() {
       {modal === 'field' && (
         <Modal title="Add New Field" onClose={closeModal}>
           <div className="space-y-4">
-            <Field label="Field Name"><input className={inputCls} placeholder="e.g. North Paddock" value={fieldForm.name} onChange={(e) => setFieldForm({ ...fieldForm, name: e.target.value })} /></Field>
-            <Field label="District"><input className={inputCls} placeholder="e.g. Sylhet" value={fieldForm.district} onChange={(e) => setFieldForm({ ...fieldForm, district: e.target.value })} /></Field>
-            <Field label="Area (hectares, optional)"><input className={inputCls} type="number" placeholder="e.g. 2.5" value={fieldForm.area_ha} onChange={(e) => setFieldForm({ ...fieldForm, area_ha: e.target.value })} /></Field>
+            <FormRow label="Field Name"><input className={inputCls} placeholder="e.g. North Paddock" value={fieldForm.name} onChange={(e) => setFieldForm({ ...fieldForm, name: e.target.value })} /></FormRow>
+            <FormRow label="District"><input className={inputCls} placeholder="e.g. Sylhet" value={fieldForm.district} onChange={(e) => setFieldForm({ ...fieldForm, district: e.target.value })} /></FormRow>
+            <FormRow label="Area (hectares, optional)"><input className={inputCls} type="number" placeholder="e.g. 2.5" value={fieldForm.area_ha} onChange={(e) => setFieldForm({ ...fieldForm, area_ha: e.target.value })} /></FormRow>
             <button className={btnPrimary} disabled={saving} onClick={addField}>{saving ? 'Saving…' : 'Add Field'}</button>
           </div>
         </Modal>
@@ -323,13 +323,13 @@ export default function DashboardPage() {
       {modal === 'crop' && (
         <Modal title="Plant a Crop" onClose={closeModal}>
           <div className="space-y-4">
-            <Field label="Crop Name"><input className={inputCls} placeholder="e.g. Rice" value={cropForm.name} onChange={(e) => setCropForm({ ...cropForm, name: e.target.value })} /></Field>
-            <Field label="Field">
+            <FormRow label="Crop Name"><input className={inputCls} placeholder="e.g. Rice" value={cropForm.name} onChange={(e) => setCropForm({ ...cropForm, name: e.target.value })} /></FormRow>
+            <FormRow label="Field">
               <select className={inputCls} value={cropForm.field_id} onChange={(e) => setCropForm({ ...cropForm, field_id: e.target.value })}>
                 <option value="">Select a field…</option>
                 {fields.map((f) => <option key={f.id} value={f.id}>{f.name} ({f.district})</option>)}
               </select>
-            </Field>
+            </FormRow>
             {fields.length === 0 && <p className="text-xs text-amber-600 bg-amber-50 rounded-lg px-3 py-2">Add a field first before planting crops.</p>}
             <button className={btnPrimary} disabled={saving || fields.length === 0} onClick={addCrop}>{saving ? 'Saving…' : 'Plant Crop'}</button>
           </div>
@@ -339,18 +339,18 @@ export default function DashboardPage() {
       {modal === 'report' && (
         <Modal title="Create Report" onClose={closeModal}>
           <div className="space-y-4">
-            <Field label="Report Title"><input className={inputCls} placeholder="e.g. Pest observation - June" value={reportForm.title} onChange={(e) => setReportForm({ ...reportForm, title: e.target.value })} /></Field>
-            <Field label="Type">
+            <FormRow label="Report Title"><input className={inputCls} placeholder="e.g. Pest observation - June" value={reportForm.title} onChange={(e) => setReportForm({ ...reportForm, title: e.target.value })} /></FormRow>
+            <FormRow label="Type">
               <select className={inputCls} value={reportForm.type} onChange={(e) => setReportForm({ ...reportForm, type: e.target.value })}>
                 {['General', 'Soil', 'Pest', 'Weather', 'Harvest'].map((t) => <option key={t}>{t}</option>)}
               </select>
-            </Field>
-            <Field label="Field (optional)">
+            </FormRow>
+            <FormRow label="Field (optional)">
               <select className={inputCls} value={reportForm.field_id} onChange={(e) => setReportForm({ ...reportForm, field_id: e.target.value })}>
                 <option value="">None</option>
                 {fields.map((f) => <option key={f.id} value={f.id}>{f.name}</option>)}
               </select>
-            </Field>
+            </FormRow>
             <button className={btnPrimary} disabled={saving} onClick={addReport}>{saving ? 'Saving…' : 'Create Report'}</button>
           </div>
         </Modal>
@@ -359,9 +359,9 @@ export default function DashboardPage() {
       {modal === 'team' && (
         <Modal title="Invite Team Member" onClose={closeModal}>
           <div className="space-y-4">
-            <Field label="Name"><input className={inputCls} placeholder="Full name" value={teamForm.name} onChange={(e) => setTeamForm({ ...teamForm, name: e.target.value })} /></Field>
-            <Field label="Email"><input className={inputCls} type="email" placeholder="email@example.com" value={teamForm.email} onChange={(e) => setTeamForm({ ...teamForm, email: e.target.value })} /></Field>
-            <Field label="Role">
+            <FormRow label="Name"><input className={inputCls} placeholder="Full name" value={teamForm.name} onChange={(e) => setTeamForm({ ...teamForm, name: e.target.value })} /></FormRow>
+            <FormRow label="Email"><input className={inputCls} type="email" placeholder="email@example.com" value={teamForm.email} onChange={(e) => setTeamForm({ ...teamForm, email: e.target.value })} /></FormRow>
+            <FormRow label="Role">
               <select className={inputCls} value={teamForm.role} onChange={(e) => setTeamForm({ ...teamForm, role: e.target.value })}>
                 {['Member', 'Manager', 'Viewer'].map((r) => <option key={r}>{r}</option>)}
               </select>

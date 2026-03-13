@@ -25,9 +25,10 @@ const adminNav = [
 interface SidebarProps {
   open?: boolean;
   onClose?: () => void;
+  mobileOnly?: boolean;
 }
 
-export default function Sidebar({ open = false, onClose }: SidebarProps) {
+export default function Sidebar({ open = false, onClose, mobileOnly = false }: SidebarProps) {
   const pathname = usePathname();
   const { user } = useAuth();
 
@@ -40,7 +41,7 @@ export default function Sidebar({ open = false, onClose }: SidebarProps) {
     .join('')
     .toUpperCase() ?? '?';
 
-  const sidebarContent = (
+  const content = (
     <aside className="w-64 bg-white flex flex-col h-full">
       {/* Brand */}
       <div className="h-16 flex items-center justify-between px-6 border-b border-gray-100 flex-shrink-0">
@@ -50,11 +51,10 @@ export default function Sidebar({ open = false, onClose }: SidebarProps) {
           </div>
           <span className="font-bold text-lg text-primary-900">AgriCore</span>
         </div>
-        {/* Close button — visible on mobile only */}
         <button
           onClick={onClose}
-          className="lg:hidden text-gray-400 hover:text-gray-700 transition-colors p-1 rounded-lg hover:bg-gray-100"
-          aria-label="Close menu"
+          className="text-gray-400 hover:text-gray-700 transition-colors p-1 rounded-lg hover:bg-gray-100"
+          aria-label="Close sidebar"
         >
           <X className="w-5 h-5" />
         </button>
@@ -68,7 +68,7 @@ export default function Sidebar({ open = false, onClose }: SidebarProps) {
             <Link
               key={href}
               href={href}
-              onClick={onClose}
+              onClick={mobileOnly ? onClose : undefined}
               className={clsx(
                 'flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors',
                 active
@@ -102,28 +102,17 @@ export default function Sidebar({ open = false, onClose }: SidebarProps) {
     </aside>
   );
 
-  return (
-    <>
-      {/* Desktop sidebar */}
-      <div className="hidden lg:flex w-64 flex-shrink-0 border-r border-gray-100">
-        {sidebarContent}
+  if (mobileOnly) {
+    // Mobile: full-screen overlay drawer
+    return (
+      <div className="fixed inset-0 z-40 flex">
+        <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onClose} />
+        <div className="relative z-50 flex-shrink-0 shadow-xl">{content}</div>
       </div>
+    );
+  }
 
-      {/* Mobile overlay */}
-      {open && (
-        <div className="lg:hidden fixed inset-0 z-40 flex">
-          {/* Backdrop */}
-          <div
-            className="absolute inset-0 bg-black/40 backdrop-blur-sm"
-            onClick={onClose}
-          />
-          {/* Drawer */}
-          <div className="relative z-50 flex-shrink-0 shadow-xl">
-            {sidebarContent}
-          </div>
-        </div>
-      )}
-    </>
-  );
+  // Desktop: static sidebar (already rendered in layout)
+  return content;
 }
 
