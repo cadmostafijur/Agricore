@@ -38,10 +38,20 @@ export type Field = Prisma.FieldModel
  */
 export type Crop = Prisma.CropModel
 /**
- * Model Report
+ * Model CropReport
  * 
  */
-export type Report = Prisma.ReportModel
+export type CropReport = Prisma.CropReportModel
+/**
+ * Model Notification
+ * 
+ */
+export type Notification = Prisma.NotificationModel
+/**
+ * Model ActivityLog
+ * 
+ */
+export type ActivityLog = Prisma.ActivityLogModel
 /**
  * Model TeamMember
  * 

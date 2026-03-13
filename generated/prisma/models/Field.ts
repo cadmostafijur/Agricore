@@ -234,7 +234,7 @@ export type FieldWhereInput = {
   created_at?: Prisma.DateTimeFilter<"Field"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   crops?: Prisma.CropListRelationFilter
-  reports?: Prisma.ReportListRelationFilter
+  crop_reports?: Prisma.CropReportListRelationFilter
 }
 
 export type FieldOrderByWithRelationInput = {
@@ -246,7 +246,7 @@ export type FieldOrderByWithRelationInput = {
   created_at?: Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
   crops?: Prisma.CropOrderByRelationAggregateInput
-  reports?: Prisma.ReportOrderByRelationAggregateInput
+  crop_reports?: Prisma.CropReportOrderByRelationAggregateInput
 }
 
 export type FieldWhereUniqueInput = Prisma.AtLeast<{
@@ -261,7 +261,7 @@ export type FieldWhereUniqueInput = Prisma.AtLeast<{
   created_at?: Prisma.DateTimeFilter<"Field"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   crops?: Prisma.CropListRelationFilter
-  reports?: Prisma.ReportListRelationFilter
+  crop_reports?: Prisma.CropReportListRelationFilter
 }, "id">
 
 export type FieldOrderByWithAggregationInput = {
@@ -297,7 +297,7 @@ export type FieldCreateInput = {
   created_at?: Date | string
   user: Prisma.UserCreateNestedOneWithoutFieldsInput
   crops?: Prisma.CropCreateNestedManyWithoutFieldInput
-  reports?: Prisma.ReportCreateNestedManyWithoutFieldInput
+  crop_reports?: Prisma.CropReportCreateNestedManyWithoutFieldInput
 }
 
 export type FieldUncheckedCreateInput = {
@@ -308,7 +308,7 @@ export type FieldUncheckedCreateInput = {
   user_id: number
   created_at?: Date | string
   crops?: Prisma.CropUncheckedCreateNestedManyWithoutFieldInput
-  reports?: Prisma.ReportUncheckedCreateNestedManyWithoutFieldInput
+  crop_reports?: Prisma.CropReportUncheckedCreateNestedManyWithoutFieldInput
 }
 
 export type FieldUpdateInput = {
@@ -318,7 +318,7 @@ export type FieldUpdateInput = {
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutFieldsNestedInput
   crops?: Prisma.CropUpdateManyWithoutFieldNestedInput
-  reports?: Prisma.ReportUpdateManyWithoutFieldNestedInput
+  crop_reports?: Prisma.CropReportUpdateManyWithoutFieldNestedInput
 }
 
 export type FieldUncheckedUpdateInput = {
@@ -329,7 +329,7 @@ export type FieldUncheckedUpdateInput = {
   user_id?: Prisma.IntFieldUpdateOperationsInput | number
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   crops?: Prisma.CropUncheckedUpdateManyWithoutFieldNestedInput
-  reports?: Prisma.ReportUncheckedUpdateManyWithoutFieldNestedInput
+  crop_reports?: Prisma.CropReportUncheckedUpdateManyWithoutFieldNestedInput
 }
 
 export type FieldCreateManyInput = {
@@ -480,20 +480,20 @@ export type FieldUpdateOneRequiredWithoutCropsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.FieldUpdateToOneWithWhereWithoutCropsInput, Prisma.FieldUpdateWithoutCropsInput>, Prisma.FieldUncheckedUpdateWithoutCropsInput>
 }
 
-export type FieldCreateNestedOneWithoutReportsInput = {
-  create?: Prisma.XOR<Prisma.FieldCreateWithoutReportsInput, Prisma.FieldUncheckedCreateWithoutReportsInput>
-  connectOrCreate?: Prisma.FieldCreateOrConnectWithoutReportsInput
+export type FieldCreateNestedOneWithoutCrop_reportsInput = {
+  create?: Prisma.XOR<Prisma.FieldCreateWithoutCrop_reportsInput, Prisma.FieldUncheckedCreateWithoutCrop_reportsInput>
+  connectOrCreate?: Prisma.FieldCreateOrConnectWithoutCrop_reportsInput
   connect?: Prisma.FieldWhereUniqueInput
 }
 
-export type FieldUpdateOneWithoutReportsNestedInput = {
-  create?: Prisma.XOR<Prisma.FieldCreateWithoutReportsInput, Prisma.FieldUncheckedCreateWithoutReportsInput>
-  connectOrCreate?: Prisma.FieldCreateOrConnectWithoutReportsInput
-  upsert?: Prisma.FieldUpsertWithoutReportsInput
+export type FieldUpdateOneWithoutCrop_reportsNestedInput = {
+  create?: Prisma.XOR<Prisma.FieldCreateWithoutCrop_reportsInput, Prisma.FieldUncheckedCreateWithoutCrop_reportsInput>
+  connectOrCreate?: Prisma.FieldCreateOrConnectWithoutCrop_reportsInput
+  upsert?: Prisma.FieldUpsertWithoutCrop_reportsInput
   disconnect?: Prisma.FieldWhereInput | boolean
   delete?: Prisma.FieldWhereInput | boolean
   connect?: Prisma.FieldWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.FieldUpdateToOneWithWhereWithoutReportsInput, Prisma.FieldUpdateWithoutReportsInput>, Prisma.FieldUncheckedUpdateWithoutReportsInput>
+  update?: Prisma.XOR<Prisma.XOR<Prisma.FieldUpdateToOneWithWhereWithoutCrop_reportsInput, Prisma.FieldUpdateWithoutCrop_reportsInput>, Prisma.FieldUncheckedUpdateWithoutCrop_reportsInput>
 }
 
 export type FieldCreateWithoutUserInput = {
@@ -502,7 +502,7 @@ export type FieldCreateWithoutUserInput = {
   district: string
   created_at?: Date | string
   crops?: Prisma.CropCreateNestedManyWithoutFieldInput
-  reports?: Prisma.ReportCreateNestedManyWithoutFieldInput
+  crop_reports?: Prisma.CropReportCreateNestedManyWithoutFieldInput
 }
 
 export type FieldUncheckedCreateWithoutUserInput = {
@@ -512,7 +512,7 @@ export type FieldUncheckedCreateWithoutUserInput = {
   district: string
   created_at?: Date | string
   crops?: Prisma.CropUncheckedCreateNestedManyWithoutFieldInput
-  reports?: Prisma.ReportUncheckedCreateNestedManyWithoutFieldInput
+  crop_reports?: Prisma.CropReportUncheckedCreateNestedManyWithoutFieldInput
 }
 
 export type FieldCreateOrConnectWithoutUserInput = {
@@ -559,7 +559,7 @@ export type FieldCreateWithoutCropsInput = {
   district: string
   created_at?: Date | string
   user: Prisma.UserCreateNestedOneWithoutFieldsInput
-  reports?: Prisma.ReportCreateNestedManyWithoutFieldInput
+  crop_reports?: Prisma.CropReportCreateNestedManyWithoutFieldInput
 }
 
 export type FieldUncheckedCreateWithoutCropsInput = {
@@ -569,7 +569,7 @@ export type FieldUncheckedCreateWithoutCropsInput = {
   district: string
   user_id: number
   created_at?: Date | string
-  reports?: Prisma.ReportUncheckedCreateNestedManyWithoutFieldInput
+  crop_reports?: Prisma.CropReportUncheckedCreateNestedManyWithoutFieldInput
 }
 
 export type FieldCreateOrConnectWithoutCropsInput = {
@@ -594,7 +594,7 @@ export type FieldUpdateWithoutCropsInput = {
   district?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutFieldsNestedInput
-  reports?: Prisma.ReportUpdateManyWithoutFieldNestedInput
+  crop_reports?: Prisma.CropReportUpdateManyWithoutFieldNestedInput
 }
 
 export type FieldUncheckedUpdateWithoutCropsInput = {
@@ -604,10 +604,10 @@ export type FieldUncheckedUpdateWithoutCropsInput = {
   district?: Prisma.StringFieldUpdateOperationsInput | string
   user_id?: Prisma.IntFieldUpdateOperationsInput | number
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  reports?: Prisma.ReportUncheckedUpdateManyWithoutFieldNestedInput
+  crop_reports?: Prisma.CropReportUncheckedUpdateManyWithoutFieldNestedInput
 }
 
-export type FieldCreateWithoutReportsInput = {
+export type FieldCreateWithoutCrop_reportsInput = {
   name: string
   area_ha?: number | null
   district: string
@@ -616,7 +616,7 @@ export type FieldCreateWithoutReportsInput = {
   crops?: Prisma.CropCreateNestedManyWithoutFieldInput
 }
 
-export type FieldUncheckedCreateWithoutReportsInput = {
+export type FieldUncheckedCreateWithoutCrop_reportsInput = {
   id?: number
   name: string
   area_ha?: number | null
@@ -626,23 +626,23 @@ export type FieldUncheckedCreateWithoutReportsInput = {
   crops?: Prisma.CropUncheckedCreateNestedManyWithoutFieldInput
 }
 
-export type FieldCreateOrConnectWithoutReportsInput = {
+export type FieldCreateOrConnectWithoutCrop_reportsInput = {
   where: Prisma.FieldWhereUniqueInput
-  create: Prisma.XOR<Prisma.FieldCreateWithoutReportsInput, Prisma.FieldUncheckedCreateWithoutReportsInput>
+  create: Prisma.XOR<Prisma.FieldCreateWithoutCrop_reportsInput, Prisma.FieldUncheckedCreateWithoutCrop_reportsInput>
 }
 
-export type FieldUpsertWithoutReportsInput = {
-  update: Prisma.XOR<Prisma.FieldUpdateWithoutReportsInput, Prisma.FieldUncheckedUpdateWithoutReportsInput>
-  create: Prisma.XOR<Prisma.FieldCreateWithoutReportsInput, Prisma.FieldUncheckedCreateWithoutReportsInput>
+export type FieldUpsertWithoutCrop_reportsInput = {
+  update: Prisma.XOR<Prisma.FieldUpdateWithoutCrop_reportsInput, Prisma.FieldUncheckedUpdateWithoutCrop_reportsInput>
+  create: Prisma.XOR<Prisma.FieldCreateWithoutCrop_reportsInput, Prisma.FieldUncheckedCreateWithoutCrop_reportsInput>
   where?: Prisma.FieldWhereInput
 }
 
-export type FieldUpdateToOneWithWhereWithoutReportsInput = {
+export type FieldUpdateToOneWithWhereWithoutCrop_reportsInput = {
   where?: Prisma.FieldWhereInput
-  data: Prisma.XOR<Prisma.FieldUpdateWithoutReportsInput, Prisma.FieldUncheckedUpdateWithoutReportsInput>
+  data: Prisma.XOR<Prisma.FieldUpdateWithoutCrop_reportsInput, Prisma.FieldUncheckedUpdateWithoutCrop_reportsInput>
 }
 
-export type FieldUpdateWithoutReportsInput = {
+export type FieldUpdateWithoutCrop_reportsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   area_ha?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   district?: Prisma.StringFieldUpdateOperationsInput | string
@@ -651,7 +651,7 @@ export type FieldUpdateWithoutReportsInput = {
   crops?: Prisma.CropUpdateManyWithoutFieldNestedInput
 }
 
-export type FieldUncheckedUpdateWithoutReportsInput = {
+export type FieldUncheckedUpdateWithoutCrop_reportsInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
   area_ha?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
@@ -675,7 +675,7 @@ export type FieldUpdateWithoutUserInput = {
   district?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   crops?: Prisma.CropUpdateManyWithoutFieldNestedInput
-  reports?: Prisma.ReportUpdateManyWithoutFieldNestedInput
+  crop_reports?: Prisma.CropReportUpdateManyWithoutFieldNestedInput
 }
 
 export type FieldUncheckedUpdateWithoutUserInput = {
@@ -685,7 +685,7 @@ export type FieldUncheckedUpdateWithoutUserInput = {
   district?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   crops?: Prisma.CropUncheckedUpdateManyWithoutFieldNestedInput
-  reports?: Prisma.ReportUncheckedUpdateManyWithoutFieldNestedInput
+  crop_reports?: Prisma.CropReportUncheckedUpdateManyWithoutFieldNestedInput
 }
 
 export type FieldUncheckedUpdateManyWithoutUserInput = {
@@ -703,12 +703,12 @@ export type FieldUncheckedUpdateManyWithoutUserInput = {
 
 export type FieldCountOutputType = {
   crops: number
-  reports: number
+  crop_reports: number
 }
 
 export type FieldCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   crops?: boolean | FieldCountOutputTypeCountCropsArgs
-  reports?: boolean | FieldCountOutputTypeCountReportsArgs
+  crop_reports?: boolean | FieldCountOutputTypeCountCrop_reportsArgs
 }
 
 /**
@@ -731,8 +731,8 @@ export type FieldCountOutputTypeCountCropsArgs<ExtArgs extends runtime.Types.Ext
 /**
  * FieldCountOutputType without action
  */
-export type FieldCountOutputTypeCountReportsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.ReportWhereInput
+export type FieldCountOutputTypeCountCrop_reportsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.CropReportWhereInput
 }
 
 
@@ -745,7 +745,7 @@ export type FieldSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   created_at?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   crops?: boolean | Prisma.Field$cropsArgs<ExtArgs>
-  reports?: boolean | Prisma.Field$reportsArgs<ExtArgs>
+  crop_reports?: boolean | Prisma.Field$crop_reportsArgs<ExtArgs>
   _count?: boolean | Prisma.FieldCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["field"]>
 
@@ -782,7 +782,7 @@ export type FieldOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = ru
 export type FieldInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   crops?: boolean | Prisma.Field$cropsArgs<ExtArgs>
-  reports?: boolean | Prisma.Field$reportsArgs<ExtArgs>
+  crop_reports?: boolean | Prisma.Field$crop_reportsArgs<ExtArgs>
   _count?: boolean | Prisma.FieldCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type FieldIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -797,7 +797,7 @@ export type $FieldPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   objects: {
     user: Prisma.$UserPayload<ExtArgs>
     crops: Prisma.$CropPayload<ExtArgs>[]
-    reports: Prisma.$ReportPayload<ExtArgs>[]
+    crop_reports: Prisma.$CropReportPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -1202,7 +1202,7 @@ export interface Prisma__FieldClient<T, Null = never, ExtArgs extends runtime.Ty
   readonly [Symbol.toStringTag]: "PrismaPromise"
   user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   crops<T extends Prisma.Field$cropsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Field$cropsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CropPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  reports<T extends Prisma.Field$reportsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Field$reportsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReportPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  crop_reports<T extends Prisma.Field$crop_reportsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Field$crop_reportsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CropReportPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1663,27 +1663,27 @@ export type Field$cropsArgs<ExtArgs extends runtime.Types.Extensions.InternalArg
 }
 
 /**
- * Field.reports
+ * Field.crop_reports
  */
-export type Field$reportsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type Field$crop_reportsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
-   * Select specific fields to fetch from the Report
+   * Select specific fields to fetch from the CropReport
    */
-  select?: Prisma.ReportSelect<ExtArgs> | null
+  select?: Prisma.CropReportSelect<ExtArgs> | null
   /**
-   * Omit specific fields from the Report
+   * Omit specific fields from the CropReport
    */
-  omit?: Prisma.ReportOmit<ExtArgs> | null
+  omit?: Prisma.CropReportOmit<ExtArgs> | null
   /**
    * Choose, which related nodes to fetch as well
    */
-  include?: Prisma.ReportInclude<ExtArgs> | null
-  where?: Prisma.ReportWhereInput
-  orderBy?: Prisma.ReportOrderByWithRelationInput | Prisma.ReportOrderByWithRelationInput[]
-  cursor?: Prisma.ReportWhereUniqueInput
+  include?: Prisma.CropReportInclude<ExtArgs> | null
+  where?: Prisma.CropReportWhereInput
+  orderBy?: Prisma.CropReportOrderByWithRelationInput | Prisma.CropReportOrderByWithRelationInput[]
+  cursor?: Prisma.CropReportWhereUniqueInput
   take?: number
   skip?: number
-  distinct?: Prisma.ReportScalarFieldEnum | Prisma.ReportScalarFieldEnum[]
+  distinct?: Prisma.CropReportScalarFieldEnum | Prisma.CropReportScalarFieldEnum[]
 }
 
 /**

@@ -17,33 +17,35 @@ model Role {
 }
 
 model User {
-  id           Int          @id @default(autoincrement())
-  name         String
-  email        String       @unique
-  password     String?
-  google_id    String?      @unique
-  avatar       String?
-  role_id      Int
-  role         Role         @relation(fields: [role_id], references: [id])
-  created_at   DateTime     @default(now())
-  updated_at   DateTime     @updatedAt
-  fields       Field[]
-  reports      Report[]
-  team_members TeamMember[]
+  id            Int           @id @default(autoincrement())
+  name          String
+  email         String        @unique
+  password      String?
+  google_id     String?       @unique
+  avatar        String?
+  role_id       Int
+  role          Role          @relation(fields: [role_id], references: [id])
+  created_at    DateTime      @default(now())
+  updated_at    DateTime      @updatedAt
+  fields        Field[]
+  crop_reports  CropReport[]
+  team_members  TeamMember[]
+  notifications Notification[]
+  activity_logs ActivityLog[]
 
   @@map("users")
 }
 
 model Field {
-  id         Int      @id @default(autoincrement())
-  name       String
-  area_ha    Float?
-  district   String
-  user_id    Int
-  user       User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  crops      Crop[]
-  reports    Report[]
-  created_at DateTime @default(now())
+  id           Int          @id @default(autoincrement())
+  name         String
+  area_ha      Float?
+  district     String
+  user_id      Int
+  user         User         @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  crops        Crop[]
+  crop_reports CropReport[]
+  created_at   DateTime     @default(now())
 
   @@map("fields")
 }
@@ -59,17 +61,49 @@ model Crop {
   @@map("crops")
 }
 
-model Report {
+model CropReport {
+  id          Int      @id @default(autoincrement())
+  title       String
+  crop_name   String
+  district    String
+  description String?
+  type        String   @default("General")  // General, Pest, Disease, Weather, Harvest
+  status      String   @default("Pending")  // Pending, Approved, Rejected
+  field_id    Int?
+  field       Field?   @relation(fields: [field_id], references: [id])
+  user_id     Int
+  user        User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  reviewed_at DateTime?
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  @@map("crop_reports")
+}
+
+model Notification {
   id         Int      @id @default(autoincrement())
-  title      String
-  type       String   @default("General")
-  field_id   Int?
-  field      Field?   @relation(fields: [field_id], references: [id])
   user_id    Int
   user       User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  title      String
+  message    String
+  type       String   @default("info")  // info, success, warning, error
+  read       Boolean  @default(false)
   created_at DateTime @default(now())
 
-  @@map("reports")
+  @@map("notifications")
+}
+
+model ActivityLog {
+  id         Int      @id @default(autoincrement())
+  user_id    Int?
+  user       User?    @relation(fields: [user_id], references: [id], onDelete: SetNull)
+  action     String
+  entity     String?
+  entity_id  Int?
+  metadata   Json?
+  created_at DateTime @default(now())
+
+  @@map("activity_logs")
 }
 
 model TeamMember {
@@ -84,3 +118,4 @@ model TeamMember {
   @@unique([owner_id, email])
   @@map("team_members")
 }
+

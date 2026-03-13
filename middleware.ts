@@ -2,8 +2,13 @@ import { NextRequest, NextResponse } from 'next/server';
 import { jwtVerify, JWTPayload } from 'jose';
 
 // Encode JWT_SECRET for jose (Edge-compatible)
-const getSecret = () =>
-  new TextEncoder().encode(process.env.JWT_SECRET ?? 'fallback_insecure_secret');
+const getSecret = () => {
+  const secret = process.env.JWT_SECRET;
+  if (!secret) {
+    throw new Error('JWT_SECRET is not set');
+  }
+  return new TextEncoder().encode(secret);
+};
 
 interface AgriCoreJWT extends JWTPayload {
   userId: number;
