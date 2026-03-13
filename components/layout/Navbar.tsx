@@ -18,7 +18,9 @@ export default function Navbar({
 
   const handleLogout = async () => {
     await logout();
-    router.push('/login');
+    // Replace history entry so Back does not return to a cached dashboard
+    router.replace('/login');
+    router.refresh();
   };
 
   return (
