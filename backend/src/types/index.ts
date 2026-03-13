@@ -11,11 +11,20 @@ export interface JwtPayload {
 }
 
 // ─────────────────────────────────────────────────────────────
-// Express Request extended with authenticated user
+// Augment Express.User so req.user carries our JWT fields.
+// This makes @types/passport's req.user compatible with JwtPayload.
 // ─────────────────────────────────────────────────────────────
-export interface AuthenticatedRequest extends Request {
-  user?: JwtPayload;
+declare global {
+  namespace Express {
+    interface User extends JwtPayload {}
+  }
 }
+
+// ─────────────────────────────────────────────────────────────
+// Express Request extended with authenticated user
+// (user property is already typed via Express.User augmentation above)
+// ─────────────────────────────────────────────────────────────
+export interface AuthenticatedRequest extends Request {}
 
 // ─────────────────────────────────────────────────────────────
 // Sanitised user object returned in API responses
