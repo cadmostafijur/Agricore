@@ -2,12 +2,10 @@
 
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
-import Image from 'next/image';
-import { LogOut, Bell } from 'lucide-react';
-import clsx from 'clsx';
+import { LogOut, Bell, Menu } from 'lucide-react';
 
-export default function Navbar() {
-  const { user, logout } = useAuth();
+export default function Navbar({ onMenuClick }: { onMenuClick?: () => void }) {
+  const { logout } = useAuth();
   const router = useRouter();
 
   const handleLogout = async () => {
@@ -17,41 +15,22 @@ export default function Navbar() {
 
   return (
     <header className="h-16 bg-white border-b border-gray-100 flex items-center justify-between px-6 flex-shrink-0">
-      {/* Left: Page context (populated by child pages) */}
-      <div />
+      {/* Left: mobile hamburger */}
+      <button
+        onClick={onMenuClick}
+        className="lg:hidden text-gray-500 hover:text-gray-700 transition-colors"
+        aria-label="Open menu"
+      >
+        <Menu className="w-5 h-5" />
+      </button>
+      <div className="hidden lg:block" />
 
-      {/* Right: user + actions */}
-      <div className="flex items-center gap-4">
-        {/* Notification bell placeholder */}
-        <button className="text-gray-400 hover:text-gray-600 relative">
+      {/* Right: actions only */}
+      <div className="flex items-center gap-3">
+        <button className="text-gray-400 hover:text-gray-600 transition-colors relative" aria-label="Notifications">
           <Bell className="w-5 h-5" />
         </button>
 
-        {/* User identity */}
-        <div className="flex items-center gap-3">
-          <div className="relative w-8 h-8 rounded-full overflow-hidden bg-primary-100 flex items-center justify-center flex-shrink-0">
-            {user?.avatar ? (
-              <Image src={user.avatar} alt="avatar" fill className="object-cover" />
-            ) : (
-              <span className="text-sm font-bold text-primary-600">
-                {user?.name?.[0]?.toUpperCase() ?? '?'}
-              </span>
-            )}
-          </div>
-          <div className="hidden sm:block text-right">
-            <p className="text-sm font-semibold text-gray-800 leading-tight">{user?.name}</p>
-            <p
-              className={clsx(
-                'text-xs font-medium',
-                user?.role === 'Admin' ? 'text-yellow-600' : 'text-primary-600'
-              )}
-            >
-              {user?.role}
-            </p>
-          </div>
-        </div>
-
-        {/* Logout */}
         <button
           onClick={handleLogout}
           title="Log out"
@@ -64,3 +43,4 @@ export default function Navbar() {
     </header>
   );
 }
+
