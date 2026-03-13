@@ -1,22 +1,43 @@
 'use client';
 
 import { useAuth } from '@/contexts/AuthContext';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
 import Navbar from '@/components/layout/Navbar';
 import Sidebar from '@/components/layout/Sidebar';
 import { PanelLeft } from 'lucide-react';
 
 export default function ProtectedLayout({ children }: { children: React.ReactNode }) {
-  const { isLoading } = useAuth();
+  const { isLoading, isAuthenticated, user } = useAuth();
+  const router = useRouter();
+  const pathname = usePathname();
   const [sidebarOpen, setSidebarOpen] = useState(false);        // mobile
   const [desktopOpen, setDesktopOpen] = useState(true);         // desktop
 
-  if (isLoading) {
+  const isAdminPath = pathname.startsWith('/admin');
+  const isBlocked = !isLoading && (!isAuthenticated || (isAdminPath && user?.role !== 'Admin'));
+
+  useEffect(() => {
+    if (isLoading) return;
+
+    if (!isAuthenticated) {
+      const params = new URLSearchParams();
+      params.set('redirect', pathname);
+      router.replace(`/login?${params.toString()}`);
+      return;
+    }
+
+    if (isAdminPath && user?.role !== 'Admin') {
+      router.replace('/dashboard');
+    }
+  }, [isLoading, isAuthenticated, isAdminPath, pathname, router, user?.role]);
+
+  if (isLoading || isBlocked) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="flex flex-col items-center gap-3">
           <div className="w-10 h-10 border-4 border-primary-600 border-t-transparent rounded-full animate-spin" />
-          <p className="text-sm text-gray-500">Loading…</p>
+          <p className="text-sm text-gray-500">Verifying access…</p>
         </div>
       </div>
     );

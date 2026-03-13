@@ -2,6 +2,7 @@
 
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 import { LogOut, Bell, Menu } from 'lucide-react';
 
 export default function Navbar({
@@ -11,12 +12,23 @@ export default function Navbar({
 }) {
   const { logout } = useAuth();
   const router = useRouter();
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const handleLogout = async () => {
-    await logout();
-    // Replace history entry so Back does not return to a cached dashboard
-    router.replace('/login');
-    router.refresh();
+    if (isLoggingOut) return;
+    setIsLoggingOut(true);
+
+    try {
+      await logout();
+      // Replace history entry so Back does not return to a cached dashboard
+      router.replace('/login');
+      router.refresh();
+    } catch {
+      // Fallback: clear cookie server-side and force redirect in one request.
+      window.location.assign('/api/auth/logout?redirect=/login');
+    } finally {
+      setIsLoggingOut(false);
+    }
   };
 
   return (
@@ -40,10 +52,11 @@ export default function Navbar({
         <button
           onClick={handleLogout}
           title="Log out"
-          className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-red-600 transition-colors px-3 py-1.5 rounded-lg hover:bg-red-50"
+          disabled={isLoggingOut}
+          className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-red-600 transition-colors px-3 py-1.5 rounded-lg hover:bg-red-50 disabled:opacity-60"
         >
           <LogOut className="w-4 h-4" />
-          <span className="hidden sm:block">Logout</span>
+          <span className="hidden sm:block">{isLoggingOut ? 'Logging out...' : 'Logout'}</span>
         </button>
       </div>
     </header>

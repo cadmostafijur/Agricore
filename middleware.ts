@@ -21,12 +21,17 @@ const PUBLIC_ROUTES = ['/', '/login', '/signup'];
 const PROTECTED_PREFIX = ['/dashboard', '/profile', '/admin', '/reports'];
 const ADMIN_PREFIX = ['/admin'];
 
+function matchesRoute(pathname: string, route: string): boolean {
+  if (route === '/') return pathname === '/';
+  return pathname === route || pathname.startsWith(`${route}/`);
+}
+
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const token = request.cookies.get('agricore_token')?.value;
 
-  const isPublic = PUBLIC_ROUTES.includes(pathname);
-  const isProtected = PROTECTED_PREFIX.some((p) => pathname.startsWith(p));
+  const isPublic = PUBLIC_ROUTES.some((route) => matchesRoute(pathname, route));
+  const isProtected = PROTECTED_PREFIX.some((route) => matchesRoute(pathname, route));
 
   // ── Unauthenticated user hitting a protected route ────────
   if (isProtected) {
@@ -42,7 +47,7 @@ export async function middleware(request: NextRequest) {
       const decoded = payload as AgriCoreJWT;
 
       // RBAC: Admin-only routes
-      const isAdminRoute = ADMIN_PREFIX.some((p) => pathname.startsWith(p));
+      const isAdminRoute = ADMIN_PREFIX.some((route) => matchesRoute(pathname, route));
       if (isAdminRoute && decoded.roleName !== 'Admin') {
         const url = request.nextUrl.clone();
         url.pathname = '/dashboard';
@@ -76,11 +81,12 @@ export const config = {
   matcher: [
     /*
      * Match all paths except:
+     * - api routes    (handled by server-side auth checks)
      * - _next/static  (static files)
      * - _next/image   (image optimisation)
      * - favicon.ico
      * - public assets (png, jpg, svg, etc.)
      */
-    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:png|jpg|jpeg|gif|svg|ico|webp)$).*)',
+    '/((?!api|_next/static|_next/image|favicon.ico|.*\\.(?:png|jpg|jpeg|gif|svg|ico|webp)$).*)',
   ],
 };
