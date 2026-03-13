@@ -7,7 +7,7 @@ export async function GET() {
     const auth = await requireAuth();
     const fields = await prisma.field.findMany({
       where: { user_id: auth.userId },
-      include: { crops: true, reports: true },
+      include: { crops: true, crop_reports: true },
       orderBy: { created_at: 'desc' },
     });
     return json({ success: true, data: { fields } });
