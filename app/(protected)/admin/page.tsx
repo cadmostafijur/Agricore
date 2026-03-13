@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import api from '@/lib/api';
-import { AdminStats, User } from '@/types';
+import { AdminStats, CropReport, User } from '@/types';
 import { getApiError } from '@/contexts/AuthContext';
 import {
   Trash2,
@@ -18,6 +18,8 @@ import {
   CheckCircle,
   AlertCircle,
   BarChart2,
+  Check,
+  X as XIcon,
 } from 'lucide-react';
 import clsx from 'clsx';
 
@@ -42,15 +44,21 @@ const riskConfig = {
   },
 } as const;
 
+type ReportFilter = 'all' | 'active' | 'pending' | 'approved' | 'rejected';
+
 export default function AdminPage() {
   const [users, setUsers] = useState<User[]>([]);
   const [stats, setStats] = useState<AdminStats | null>(null);
+  const [reports, setReports] = useState<CropReport[]>([]);
   const [loading, setLoading] = useState(true);
   const [statsLoading, setStatsLoading] = useState(true);
+  const [reportsLoading, setReportsLoading] = useState(true);
   const [error, setError] = useState('');
   const [search, setSearch] = useState('');
   const [deleting, setDeleting] = useState<number | null>(null);
-  const [activeTab, setActiveTab] = useState<'overview' | 'users' | 'risk'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'users' | 'reports' | 'risk'>('overview');
+  const [reportFilter, setReportFilter] = useState<ReportFilter>('all');
+  const [updatingReportId, setUpdatingReportId] = useState<number | null>(null);
 
   const fetchUsers = async () => {
     try {
@@ -77,9 +85,24 @@ export default function AdminPage() {
     }
   };
 
+  const fetchReports = async () => {
+    try {
+      setReportsLoading(true);
+      const { data } = await api.get<{ success: boolean; data: { reports: CropReport[] } }>(
+        '/admin/reports'
+      );
+      setReports(data.data.reports);
+    } catch {
+      // ignore; table will just be empty
+    } finally {
+      setReportsLoading(false);
+    }
+  };
+
   useEffect(() => {
     fetchUsers();
     fetchStats();
+    fetchReports();
   }, []);
 
   const handleDelete = async (id: number) => {
@@ -103,6 +126,19 @@ export default function AdminPage() {
 
   const adminCount = users.filter((u) => u.role === 'Admin').length;
   const customerCount = users.filter((u) => u.role === 'Customer').length;
+
+  const updateReportStatus = async (id: number, status: 'Approved' | 'Rejected') => {
+    try {
+      setUpdatingReportId(id);
+      await api.patch(`/admin/reports/${id}`, { status });
+      // refresh reports + stats to reflect new status
+      await Promise.all([fetchReports(), fetchStats()]);
+    } catch (err) {
+      alert(getApiError(err));
+    } finally {
+      setUpdatingReportId(null);
+    }
+  };
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto">
@@ -151,7 +187,7 @@ export default function AdminPage() {
 
       {/* Tabs */}
       <div className="flex gap-1 bg-gray-100 p-1 rounded-xl w-fit">
-        {(['overview', 'users', 'risk'] as const).map((tab) => (
+        {(['overview', 'users', 'reports', 'risk'] as const).map((tab) => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
@@ -160,7 +196,13 @@ export default function AdminPage() {
               activeTab === tab ? 'bg-white text-gray-800 shadow-sm' : 'text-gray-500 hover:text-gray-700'
             )}
           >
-            {tab === 'overview' ? '📊 Overview' : tab === 'users' ? '👥 Users' : '🗺️ District Risk'}
+            {tab === 'overview'
+              ? '📊 Overview'
+              : tab === 'users'
+              ? '👥 Users'
+              : tab === 'reports'
+              ? '📄 Reports'
+              : '🗺️ District Risk'}
           </button>
         ))}
       </div>
@@ -226,6 +268,136 @@ export default function AdminPage() {
               </ul>
             )}
           </div>
+        </div>
+      )}
+
+      {/* Reports table */}
+      {activeTab === 'reports' && (
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+          <div className="p-5 border-b border-gray-100 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <h2 className="text-base font-semibold text-gray-800 flex items-center gap-2">
+                <FileText className="w-4 h-4 text-amber-500" />
+                Crop Reports
+              </h2>
+              <p className="text-xs text-gray-400">
+                {reports.length} total · {stats?.activeReports ?? 0} active ·{' '}
+                {stats?.pendingReports ?? 0} pending
+              </p>
+            </div>
+            <div className="inline-flex items-center gap-1 rounded-full bg-gray-100 p-1 text-xs">
+              {(
+                [
+                  ['all', 'All'],
+                  ['active', 'Active'],
+                  ['pending', 'Pending'],
+                  ['approved', 'Approved'],
+                  ['rejected', 'Rejected'],
+                ] as [ReportFilter, string][]
+              ).map(([value, label]) => (
+                <button
+                  key={value}
+                  type="button"
+                  onClick={() => setReportFilter(value)}
+                  className={clsx(
+                    'px-3 py-1 rounded-full font-medium transition-colors',
+                    reportFilter === value
+                      ? 'bg-white text-gray-900 shadow-sm'
+                      : 'text-gray-500 hover:text-gray-700'
+                  )}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {reportsLoading ? (
+            <div className="py-16 text-center text-gray-400 text-sm">Loading reports…</div>
+          ) : reports.length === 0 ? (
+            <div className="py-16 text-center text-gray-400 text-sm">No crop reports found.</div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="text-left text-gray-500 border-b border-gray-100 bg-gray-50">
+                    <th className="px-5 py-3 font-medium">ID</th>
+                    <th className="px-5 py-3 font-medium">Title</th>
+                    <th className="px-5 py-3 font-medium">Farmer</th>
+                    <th className="px-5 py-3 font-medium">Crop / District</th>
+                    <th className="px-5 py-3 font-medium">Type</th>
+                    <th className="px-5 py-3 font-medium">Status</th>
+                    <th className="px-5 py-3 font-medium">Created</th>
+                    <th className="px-5 py-3 font-medium text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-50">
+                  {reports
+                    .filter((r) => {
+                      if (reportFilter === 'all') return true;
+                      if (reportFilter === 'active') return r.status !== 'Rejected';
+                      return r.status === reportFilter[0].toUpperCase() + reportFilter.slice(1);
+                    })
+                    .map((r) => (
+                    <tr key={r.id} className="hover:bg-gray-50 transition-colors">
+                      <td className="px-5 py-3 text-gray-400">#{r.id}</td>
+                      <td className="px-5 py-3 font-medium text-gray-800">{r.title}</td>
+                      <td className="px-5 py-3 text-gray-600">
+                        {r.user?.name ?? '—'}
+                        <div className="text-[11px] text-gray-400">{r.user?.email}</div>
+                      </td>
+                      <td className="px-5 py-3 text-gray-600">
+                        {r.crop_name}
+                        <div className="text-[11px] text-gray-400">{r.district}</div>
+                      </td>
+                      <td className="px-5 py-3 text-gray-500">{r.type}</td>
+                      <td className="px-5 py-3">
+                        <span
+                          className={clsx(
+                            'inline-block px-2.5 py-0.5 rounded-full text-xs font-semibold',
+                            r.status === 'Approved'
+                              ? 'bg-emerald-100 text-emerald-700'
+                              : r.status === 'Rejected'
+                              ? 'bg-red-100 text-red-700'
+                              : 'bg-amber-100 text-amber-700'
+                          )}
+                        >
+                          {r.status}
+                        </span>
+                      </td>
+                      <td className="px-5 py-3 text-gray-500">
+                        {new Date(r.created_at).toLocaleDateString()}
+                      </td>
+                      <td className="px-5 py-3 text-right space-x-1">
+                        {r.status === 'Pending' && (
+                          <>
+                            <button
+                              type="button"
+                              onClick={() => updateReportStatus(r.id, 'Approved')}
+                              disabled={updatingReportId === r.id}
+                              className="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-semibold rounded-full bg-emerald-50 text-emerald-700 hover:bg-emerald-100 disabled:opacity-50"
+                            >
+                              <Check className="w-3 h-3" />
+                              Approve
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => updateReportStatus(r.id, 'Rejected')}
+                              disabled={updatingReportId === r.id}
+                              className="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-semibold rounded-full bg-red-50 text-red-700 hover:bg-red-100 disabled:opacity-50"
+                            >
+                              <XIcon className="w-3 h-3" />
+                              Reject
+                            </button>
+                          </>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
       )}
 
