@@ -13,7 +13,7 @@ export async function GET() {
         prisma.user.count({ where: { role: { role_name: 'Customer' } } }),
         prisma.field.count(),
         prisma.crop.count({ where: { status: 'Active' } }),
-        prisma.report.count(),
+        prisma.cropReport.count(),
       ]);
 
     // Aggregate fields by district
@@ -34,7 +34,7 @@ export async function GET() {
         const activeCrops = await prisma.crop.count({
           where: { field_id: { in: fieldIds }, status: 'Active' },
         });
-        const reports = await prisma.report.count({
+        const reports = await prisma.cropReport.count({
           where: { field_id: { in: fieldIds } },
         });
         // Simple risk score: high if many reports relative to fields
