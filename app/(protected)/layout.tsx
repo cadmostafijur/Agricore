@@ -39,8 +39,8 @@ export default function ProtectedLayout({ children }: { children: React.ReactNod
 
       <div className="flex flex-col flex-1 overflow-hidden min-w-0">
         <Navbar
-          onMenuClick={() => setSidebarOpen(true)}
-          onDesktopMenuClick={() => setDesktopOpen((v) => !v)}
+          onMenuClickAction={() => setSidebarOpen(true)}
+          onDesktopMenuClickAction={() => setDesktopOpen((v) => !v)}
           desktopSidebarOpen={desktopOpen}
         />
         <main className="flex-1 overflow-y-auto p-6 lg:p-8">{children}</main>

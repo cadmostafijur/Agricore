@@ -5,12 +5,12 @@ import { useRouter } from 'next/navigation';
 import { LogOut, Bell, Menu, PanelLeftClose, PanelLeft } from 'lucide-react';
 
 export default function Navbar({
-  onMenuClick,
-  onDesktopMenuClick,
+  onMenuClickAction,
+  onDesktopMenuClickAction,
   desktopSidebarOpen,
 }: {
-  onMenuClick?: () => void;
-  onDesktopMenuClick?: () => void;
+  onMenuClickAction?: () => void;
+  onDesktopMenuClickAction?: () => void;
   desktopSidebarOpen?: boolean;
 }) {
   const { logout } = useAuth();
@@ -26,7 +26,7 @@ export default function Navbar({
       <div className="flex items-center gap-2">
         {/* Desktop sidebar toggle */}
         <button
-          onClick={onDesktopMenuClick}
+          onClick={onDesktopMenuClickAction}
           className="hidden lg:flex text-gray-400 hover:text-gray-700 transition-colors p-1.5 rounded-lg hover:bg-gray-100"
           aria-label="Toggle sidebar"
           title="Toggle sidebar"
@@ -37,7 +37,7 @@ export default function Navbar({
         </button>
         {/* Mobile hamburger */}
         <button
-          onClick={onMenuClick}
+          onClick={onMenuClickAction}
           className="lg:hidden text-gray-500 hover:text-gray-700 transition-colors p-1.5 rounded-lg hover:bg-gray-100"
           aria-label="Open menu"
         >
