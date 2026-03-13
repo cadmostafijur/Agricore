@@ -31,3 +31,12 @@ export async function requireAdmin(): Promise<AgriCoreJWTPayload> {
   return user;
 }
 
+export async function requireCustomer(): Promise<AgriCoreJWTPayload> {
+  const user = await requireAuth();
+  if (user.roleName !== 'Customer') {
+    const err = Object.assign(new Error('Customer access required.'), { statusCode: 403 });
+    throw err;
+  }
+  return user;
+}
+

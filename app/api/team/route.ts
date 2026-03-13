@@ -1,10 +1,10 @@
-import { requireAuth } from '@/lib/auth-server';
+import { requireCustomer } from '@/lib/auth-server';
 import prisma from '@/lib/prisma';
 import { json, errorJson } from '@/app/api/_utils/response';
 
 export async function GET() {
   try {
-    const auth = await requireAuth();
+    const auth = await requireCustomer();
     const members = await prisma.teamMember.findMany({
       where: { owner_id: auth.userId },
       orderBy: { created_at: 'desc' },
@@ -17,7 +17,7 @@ export async function GET() {
 
 export async function POST(req: Request) {
   try {
-    const auth = await requireAuth();
+    const auth = await requireCustomer();
     const { name, email, role } = await req.json();
     if (!name || !email) {
       return json({ success: false, message: 'Name and email are required.' }, { status: 400 });

@@ -15,7 +15,15 @@ export default function ProtectedLayout({ children }: { children: React.ReactNod
   const [desktopOpen, setDesktopOpen] = useState(true);         // desktop
 
   const isAdminPath = pathname.startsWith('/admin');
-  const isBlocked = !isLoading && (!isAuthenticated || (isAdminPath && user?.role !== 'Admin'));
+  const isCustomerPath =
+    pathname.startsWith('/dashboard') ||
+    pathname.startsWith('/profile') ||
+    pathname.startsWith('/reports');
+  const isBlocked =
+    !isLoading &&
+    (!isAuthenticated ||
+      (isAdminPath && user?.role !== 'Admin') ||
+      (isCustomerPath && user?.role !== 'Customer'));
 
   useEffect(() => {
     if (isLoading) return;
@@ -29,8 +37,13 @@ export default function ProtectedLayout({ children }: { children: React.ReactNod
 
     if (isAdminPath && user?.role !== 'Admin') {
       router.replace('/dashboard');
+      return;
     }
-  }, [isLoading, isAuthenticated, isAdminPath, pathname, router, user?.role]);
+
+    if (isCustomerPath && user?.role !== 'Customer') {
+      router.replace('/admin');
+    }
+  }, [isLoading, isAuthenticated, isAdminPath, isCustomerPath, pathname, router, user?.role]);
 
   if (isLoading || isBlocked) {
     return (

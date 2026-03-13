@@ -32,7 +32,7 @@ export default function Sidebar({ open = false, onClose, mobileOnly = false }: S
   const pathname = usePathname();
   const { user } = useAuth();
 
-  const navItems = user?.role === 'Admin' ? [...customerNav, ...adminNav] : customerNav;
+  const navItems = user?.role === 'Admin' ? adminNav : customerNav;
 
   const initials = user?.name
     ?.split(' ')

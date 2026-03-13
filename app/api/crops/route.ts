@@ -1,10 +1,10 @@
-import { requireAuth } from '@/lib/auth-server';
+import { requireCustomer } from '@/lib/auth-server';
 import prisma from '@/lib/prisma';
 import { json, errorJson } from '@/app/api/_utils/response';
 
 export async function GET() {
   try {
-    const auth = await requireAuth();
+    const auth = await requireCustomer();
     const fields = await prisma.field.findMany({ where: { user_id: auth.userId }, select: { id: true } });
     const fieldIds = fields.map((f) => f.id);
     const crops = await prisma.crop.findMany({
@@ -20,7 +20,7 @@ export async function GET() {
 
 export async function POST(req: Request) {
   try {
-    const auth = await requireAuth();
+    const auth = await requireCustomer();
     const { name, field_id, status } = await req.json();
     if (!name || !field_id) {
       return json({ success: false, message: 'Name and field are required.' }, { status: 400 });

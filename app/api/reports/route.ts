@@ -1,11 +1,11 @@
-import { requireAuth } from '@/lib/auth-server';
+import { requireCustomer } from '@/lib/auth-server';
 import prisma from '@/lib/prisma';
 import { json, errorJson } from '@/app/api/_utils/response';
 
 // GET /api/reports - list current user's crop reports
 export async function GET() {
   try {
-    const auth = await requireAuth();
+    const auth = await requireCustomer();
     const reports = await prisma.cropReport.findMany({
       where: { user_id: auth.userId },
       include: { field: { select: { name: true, district: true } } },
@@ -20,7 +20,7 @@ export async function GET() {
 // POST /api/reports - create a new crop report
 export async function POST(req: Request) {
   try {
-    const auth = await requireAuth();
+    const auth = await requireCustomer();
     const { title, crop_name, district, description, type, field_id } = await req.json();
 
     if (!title || !crop_name || !district) {

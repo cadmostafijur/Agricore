@@ -20,6 +20,7 @@ interface AgriCoreJWT extends JWTPayload {
 const PUBLIC_ROUTES = ['/', '/login', '/signup'];
 const PROTECTED_PREFIX = ['/dashboard', '/profile', '/admin', '/reports'];
 const ADMIN_PREFIX = ['/admin'];
+const CUSTOMER_PREFIX = ['/dashboard', '/profile', '/reports'];
 
 function matchesRoute(pathname: string, route: string): boolean {
   if (route === '/') return pathname === '/';
@@ -51,6 +52,14 @@ export async function middleware(request: NextRequest) {
       if (isAdminRoute && decoded.roleName !== 'Admin') {
         const url = request.nextUrl.clone();
         url.pathname = '/dashboard';
+        return NextResponse.redirect(url);
+      }
+
+      // RBAC: Customer-only routes
+      const isCustomerRoute = CUSTOMER_PREFIX.some((route) => matchesRoute(pathname, route));
+      if (isCustomerRoute && decoded.roleName !== 'Customer') {
+        const url = request.nextUrl.clone();
+        url.pathname = '/admin';
         return NextResponse.redirect(url);
       }
 
