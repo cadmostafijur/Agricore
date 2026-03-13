@@ -4,6 +4,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useState } from 'react';
 import Navbar from '@/components/layout/Navbar';
 import Sidebar from '@/components/layout/Sidebar';
+import { PanelLeft } from 'lucide-react';
 
 export default function ProtectedLayout({ children }: { children: React.ReactNode }) {
   const { isLoading } = useAuth();
@@ -40,9 +41,18 @@ export default function ProtectedLayout({ children }: { children: React.ReactNod
       <div className="flex flex-col flex-1 overflow-hidden min-w-0">
         <Navbar
           onMenuClickAction={() => setSidebarOpen(true)}
-          onDesktopMenuClickAction={() => setDesktopOpen((v) => !v)}
-          desktopSidebarOpen={desktopOpen}
         />
+        {!desktopOpen && (
+          <button
+            type="button"
+            onClick={() => setDesktopOpen(true)}
+            className="hidden lg:flex fixed left-3 top-20 z-30 items-center justify-center w-10 h-10 rounded-xl bg-white border border-gray-200 shadow-sm text-gray-500 hover:text-gray-800 hover:bg-gray-50"
+            aria-label="Open sidebar"
+            title="Open sidebar"
+          >
+            <PanelLeft className="w-5 h-5" />
+          </button>
+        )}
         <main className="flex-1 overflow-y-auto p-6 lg:p-8">{children}</main>
       </div>
     </div>

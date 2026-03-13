@@ -18,7 +18,7 @@ interface AgriCoreJWT extends JWTPayload {
 }
 
 const PUBLIC_ROUTES = ['/', '/login', '/signup'];
-const PROTECTED_PREFIX = ['/dashboard', '/profile', '/admin'];
+const PROTECTED_PREFIX = ['/dashboard', '/profile', '/admin', '/reports'];
 const ADMIN_PREFIX = ['/admin'];
 
 export async function middleware(request: NextRequest) {
