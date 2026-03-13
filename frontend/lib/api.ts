@@ -1,6 +1,7 @@
 import axios, { AxiosError } from 'axios';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:5000/api';
+// Same-origin API (Next.js Route Handlers under /api)
+const API_URL = '/api';
 
 /** Shared Axios instance — always sends the HttpOnly cookie */
 const api = axios.create({
