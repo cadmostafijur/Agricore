@@ -1,6 +1,6 @@
 # 🌾 AgriCore — Authentication & Authorization System
 
-A production-ready, full-stack authentication and authorization platform built with **Next.js (App Router)**, **Express.js**, **PostgreSQL (Prisma ORM)**, **JWT (HttpOnly cookies)**, **bcrypt**, **Google OAuth 2.0**, and **Role-Based Access Control (RBAC)**.
+A production-ready, full-stack authentication and authorization platform built with **Next.js (App Router)**, **PostgreSQL (Prisma ORM)**, **JWT (HttpOnly cookies)**, **bcrypt**, **Google OAuth 2.0**, and **Role-Based Access Control (RBAC)** — deployed as a **single Next.js app** where the API lives under `app/api`.
 
 ---
 
@@ -24,8 +24,8 @@ A production-ready, full-stack authentication and authorization platform built w
 
 ```
 ┌─────────────────────┐       HTTPS / Cookie       ┌──────────────────────────┐
-│   Next.js Frontend  │ ◄──────────────────────────► │   Express.js Backend API │
-│   (App Router)      │                              │   (Port 5000)            │
+│     Next.js App     │ ◄──────────────────────────► │   Route Handlers (API)   │
+│   (App Router)      │                              │   under /api/*           │
 │   Port 3000         │                              │                          │
 │                     │   JWT in HttpOnly Cookie     │   ┌──────────────────┐   │
 │  ┌───────────────┐  │ ◄─── Set on Login ──────────► │   │  PostgreSQL DB   │   │
@@ -48,11 +48,11 @@ A production-ready, full-stack authentication and authorization platform built w
 | Layer       | Technology                                                            |
 |-------------|-----------------------------------------------------------------------|
 | Frontend    | Next.js 14 (App Router), TypeScript, Tailwind CSS, react-hook-form, Zod, jose |
-| Backend     | Node.js, Express.js, TypeScript                                       |
+| Backend     | Next.js Route Handlers (`app/api`), TypeScript                         |
 | Database    | PostgreSQL with Prisma ORM                                            |
-| Auth        | JWT (HttpOnly cookies), bcryptjs (12 rounds), Passport.js (Google)   |
-| Validation  | Joi (backend), Zod (frontend)                                         |
-| Security    | Helmet, CORS, express-rate-limit                                      |
+| Auth        | JWT (HttpOnly cookies), bcryptjs (12 rounds), Google OAuth 2.0        |
+| Validation  | Zod (frontend + API routes)                                           |
+| Security    | Next.js middleware route protection                                   |
 
 ---
 
@@ -92,69 +92,39 @@ CREATE TABLE users (
 
 ```
 Agricore/
-├── backend/
-│   ├── prisma/
-│   │   ├── schema.prisma          # Database schema
-│   │   └── seed.ts                # Initial data (roles + admin user)
-│   ├── src/
-│   │   ├── config/
-│   │   │   ├── database.ts        # Prisma client singleton
-│   │   │   └── passport.ts        # Google OAuth strategy
-│   │   ├── controllers/
-│   │   │   ├── auth.controller.ts # register, login, logout, getMe, googleCallback
-│   │   │   └── user.controller.ts # profile CRUD + admin user management
-│   │   ├── middleware/
-│   │   │   ├── auth.middleware.ts  # JWT cookie verification
-│   │   │   ├── role.middleware.ts  # RBAC enforcement
-│   │   │   ├── validate.middleware.ts # Joi body validation
-│   │   │   └── error.middleware.ts # Global error handler
-│   │   ├── routes/
-│   │   │   ├── auth.routes.ts     # /api/auth/*
-│   │   │   ├── user.routes.ts     # /api/users/*
-│   │   │   └── admin.routes.ts    # /api/admin/*
-│   │   ├── services/
-│   │   │   ├── auth.service.ts    # Business logic for auth
-│   │   │   └── user.service.ts    # Business logic for users
-│   │   ├── types/index.ts         # Shared TypeScript types
-│   │   ├── utils/
-│   │   │   ├── jwt.utils.ts       # Token sign/verify helpers
-│   │   │   └── password.utils.ts  # bcrypt helpers
-│   │   ├── validators/
-│   │   │   └── auth.validator.ts  # Joi schemas
-│   │   ├── app.ts                 # Express app setup
-│   │   └── server.ts              # Entry point
-│   ├── .env.example
-│   ├── package.json
-│   └── tsconfig.json
-│
-├── frontend/
-│   ├── app/
-│   │   ├── (auth)/                # Public auth pages group
-│   │   │   ├── layout.tsx         # Centered card layout
-│   │   │   ├── login/page.tsx
-│   │   │   └── signup/page.tsx
-│   │   ├── (protected)/           # Authenticated pages group
-│   │   │   ├── layout.tsx         # Sidebar + Navbar shell
-│   │   │   ├── dashboard/page.tsx
-│   │   │   ├── profile/page.tsx
-│   │   │   └── admin/page.tsx     # Admin-only
-│   │   ├── globals.css
-│   │   ├── layout.tsx             # Root layout with AuthProvider
-│   │   └── page.tsx               # Landing page
-│   ├── components/
-│   │   ├── forms/                 # LoginForm, SignupForm
-│   │   ├── layout/                # Navbar, Sidebar
-│   │   └── ui/                    # Button, Input
-│   ├── contexts/AuthContext.tsx   # Global auth state + hooks
-│   ├── hooks/useAuth.ts           # Re-export
-│   ├── lib/
-│   │   ├── api.ts                 # Axios instance with credentials
-│   │   └── validators.ts          # Zod schemas
-│   ├── middleware.ts              # Next.js Edge middleware (JWT verify + RBAC)
-│   ├── types/index.ts
-│   ├── .env.local.example
-│   └── package.json
-│
+├── app/
+│   ├── (auth)/                    # Public auth pages group
+│   │   ├── layout.tsx             # Centered card layout
+│   │   ├── login/page.tsx
+│   │   └── signup/page.tsx
+│   ├── (protected)/               # Authenticated pages group
+│   │   ├── layout.tsx             # Sidebar + Navbar shell
+│   │   ├── dashboard/page.tsx
+│   │   ├── profile/page.tsx
+│   │   └── admin/page.tsx         # Admin-only
+│   ├── api/                       # Backend API (Route Handlers)
+│   ├── globals.css
+│   ├── layout.tsx                 # Root layout with AuthProvider
+│   └── page.tsx                   # Landing page
+├── components/
+│   ├── forms/                     # LoginForm, SignupForm
+│   ├── layout/                    # Navbar, Sidebar
+│   └── ui/                        # Button, Input
+├── contexts/AuthContext.tsx       # Global auth state + hooks
+├── hooks/useAuth.ts               # Re-export
+├── lib/
+│   ├── api.ts                     # Axios instance with credentials (baseURL=/api)
+│   ├── prisma.ts                  # Prisma client singleton (adapter-pg)
+│   ├── auth-jwt.ts                # jose sign/verify
+│   ├── auth-server.ts             # cookie auth helpers
+│   └── validators.ts              # Zod schemas
+├── middleware.ts                  # Next.js Edge middleware (JWT verify + RBAC)
+├── prisma/
+│   ├── schema.prisma              # Database schema
+│   └── seed.ts                    # Initial data (roles + users)
+├── prisma.config.ts               # Prisma v7 config (datasource + migrations)
+├── types/index.ts
+├── .env.local.example
 ├── postman/
 │   └── AgriCore.postman_collection.json
 └── README.md
@@ -164,30 +134,16 @@ Agricore/
 
 ## Environment Variables
 
-### Backend — `backend/.env`
+Copy `.env.local.example` → `.env.local` and fill in:
 
-Copy `backend/.env.example` → `backend/.env` and fill in:
-
-| Variable               | Description                                      |
-|------------------------|--------------------------------------------------|
-| `PORT`                 | Server port (default `5000`)                     |
-| `NODE_ENV`             | `development` or `production`                    |
-| `DATABASE_URL`         | PostgreSQL connection string                     |
-| `JWT_SECRET`           | Min 32 chars — keep secret!                      |
-| `JWT_EXPIRES_IN`       | Token TTL e.g. `7d`                              |
-| `GOOGLE_CLIENT_ID`     | From Google Cloud Console                        |
-| `GOOGLE_CLIENT_SECRET` | From Google Cloud Console                        |
-| `GOOGLE_CALLBACK_URL`  | `http://localhost:5000/api/auth/google/callback` |
-| `FRONTEND_URL`         | `http://localhost:3000`                          |
-
-### Frontend — `frontend/.env.local`
-
-Copy `frontend/.env.local.example` → `frontend/.env.local`:
-
-| Variable                | Description                         |
-|-------------------------|-------------------------------------|
-| `NEXT_PUBLIC_API_URL`   | Backend API base URL                |
-| `JWT_SECRET`            | **Must match** backend `JWT_SECRET` (used in Next.js middleware only — server-side) |
+| Variable               | Description |
+|------------------------|-------------|
+| `DATABASE_URL`         | Neon/Postgres connection string |
+| `JWT_SECRET`           | Min 32 chars — keep secret |
+| `JWT_EXPIRES_IN`       | Token TTL e.g. `7d` (optional) |
+| `GOOGLE_CLIENT_ID`     | From Google Cloud Console (optional) |
+| `GOOGLE_CLIENT_SECRET` | From Google Cloud Console (optional) |
+| `GOOGLE_CALLBACK_URL`  | `http://localhost:3000/api/auth/google/callback` (local) |
 
 ---
 
@@ -202,37 +158,21 @@ Copy `frontend/.env.local.example` → `frontend/.env.local`:
 ### 1. Clone & Install
 
 ```bash
-# Backend
-cd backend
-npm install
-
-# Frontend
-cd ../frontend
 npm install
 ```
 
 ### 2. Set Up Environment Variables
 
 ```bash
-# Backend
-cp backend/.env.example backend/.env
-# Edit backend/.env with your DB credentials, JWT secret, and Google OAuth keys
-
-# Frontend
-cp frontend/.env.local.example frontend/.env.local
-# Edit frontend/.env.local — set NEXT_PUBLIC_API_URL and JWT_SECRET
+cp .env.local.example .env.local
+# Edit .env.local — set DATABASE_URL, JWT_SECRET, and optional Google OAuth keys
 ```
 
 ### 3. Set Up the Database
 
 ```bash
-cd backend
-
 # Create the database schema
 npm run db:push          # or: npm run db:migrate
-
-# Generate Prisma client
-npm run db:generate
 
 # Seed roles and default users
 npm run db:seed
@@ -240,16 +180,7 @@ npm run db:seed
 
 ### 4. Run the Applications
 
-**Terminal 1 — Backend:**
 ```bash
-cd backend
-npm run dev
-# API running at http://localhost:5000
-```
-
-**Terminal 2 — Frontend:**
-```bash
-cd frontend
 npm run dev
 # App running at http://localhost:3000
 ```
@@ -263,14 +194,13 @@ npm run dev
 | `http://localhost:3000/signup`   | Signup page              |
 | `http://localhost:3000/dashboard`| Customer dashboard       |
 | `http://localhost:3000/admin`    | Admin panel              |
-| `http://localhost:5000/health`   | Backend health check     |
 
 ---
 
 ## API Documentation
 
 ### Base URL
-`http://localhost:5000/api`
+`/api` (same-origin)
 
 All protected endpoints require the `agricore_token` HttpOnly cookie (set automatically on login).
 
@@ -438,8 +368,8 @@ Browser              Backend                 Google
 3. Navigate to **APIs & Services → Credentials**
 4. Click **Create Credentials → OAuth 2.0 Client ID**
 5. Application type: **Web application**
-6. Add Authorized redirect URI: `http://localhost:5000/api/auth/google/callback`
-7. Copy **Client ID** and **Client Secret** to `backend/.env`
+6. Add Authorized redirect URI: `http://localhost:3000/api/auth/google/callback` (local) and `https://<your-domain>/api/auth/google/callback` (Vercel)
+7. Copy **Client ID** and **Client Secret** to `.env.local`
 
 ---
 
