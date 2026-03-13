@@ -51,13 +51,15 @@ export default function Sidebar({ open = false, onClose, mobileOnly = false }: S
           </div>
           <span className="font-bold text-lg text-primary-900">AgriCore</span>
         </div>
-        <button
-          onClick={onClose}
-          className="text-gray-400 hover:text-gray-700 transition-colors p-1 rounded-lg hover:bg-gray-100"
-          aria-label="Close sidebar"
-        >
-          <X className="w-5 h-5" />
-        </button>
+        {mobileOnly && onClose && (
+          <button
+            onClick={onClose}
+            className="text-gray-400 hover:text-gray-700 transition-colors p-1 rounded-lg hover:bg-gray-100"
+            aria-label="Close sidebar"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        )}
       </div>
 
       {/* Navigation */}

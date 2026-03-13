@@ -1,8 +1,9 @@
 import { getAuthUser } from '@/lib/auth-server';
 import prisma from '@/lib/prisma';
-import { Leaf, ShieldCheck, Sprout, FileText, Bell, Users, BarChart2 } from 'lucide-react';
+import { Leaf, ShieldCheck, Sprout, FileText, Bell, Users, BarChart2, Plus } from 'lucide-react';
 import Image from 'next/image';
 import clsx from 'clsx';
+import Link from 'next/link';
 
 export default async function DashboardPage() {
   const auth = await getAuthUser();
@@ -123,10 +124,19 @@ export default async function DashboardPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* My crop reports */}
         <div className="lg:col-span-2 bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-          <h3 className="text-sm font-semibold text-gray-700 mb-4 flex items-center gap-2">
-            <FileText className="w-4 h-4 text-amber-500" />
-            My Crop Reports
-          </h3>
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+              <FileText className="w-4 h-4 text-amber-500" />
+              My Crop Reports
+            </h3>
+            <Link
+              href="/reports/new"
+              className="inline-flex items-center gap-1.5 text-xs font-medium text-primary-600 hover:text-primary-700 hover:underline"
+            >
+              <Plus className="w-3 h-3" />
+              Create report
+            </Link>
+          </div>
           {user.crop_reports.length === 0 ? (
             <p className="text-sm text-gray-400 text-center py-6">
               You haven&apos;t submitted any crop reports yet.
