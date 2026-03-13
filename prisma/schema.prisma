@@ -17,16 +17,70 @@ model Role {
 }
 
 model User {
-  id         Int      @id @default(autoincrement())
-  name       String
-  email      String   @unique
-  password   String?
-  google_id  String?  @unique
-  avatar     String?
-  role_id    Int
-  role       Role     @relation(fields: [role_id], references: [id])
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  id           Int          @id @default(autoincrement())
+  name         String
+  email        String       @unique
+  password     String?
+  google_id    String?      @unique
+  avatar       String?
+  role_id      Int
+  role         Role         @relation(fields: [role_id], references: [id])
+  created_at   DateTime     @default(now())
+  updated_at   DateTime     @updatedAt
+  fields       Field[]
+  reports      Report[]
+  team_members TeamMember[]
 
   @@map("users")
+}
+
+model Field {
+  id         Int      @id @default(autoincrement())
+  name       String
+  area_ha    Float?
+  district   String
+  user_id    Int
+  user       User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  crops      Crop[]
+  reports    Report[]
+  created_at DateTime @default(now())
+
+  @@map("fields")
+}
+
+model Crop {
+  id         Int      @id @default(autoincrement())
+  name       String
+  field_id   Int
+  field      Field    @relation(fields: [field_id], references: [id], onDelete: Cascade)
+  status     String   @default("Active")
+  planted_at DateTime @default(now())
+
+  @@map("crops")
+}
+
+model Report {
+  id         Int      @id @default(autoincrement())
+  title      String
+  type       String   @default("General")
+  field_id   Int?
+  field      Field?   @relation(fields: [field_id], references: [id])
+  user_id    Int
+  user       User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  created_at DateTime @default(now())
+
+  @@map("reports")
+}
+
+model TeamMember {
+  id         Int      @id @default(autoincrement())
+  owner_id   Int
+  owner      User     @relation(fields: [owner_id], references: [id], onDelete: Cascade)
+  email      String
+  name       String
+  role       String   @default("Member")
+  created_at DateTime @default(now())
+
+  @@unique([owner_id, email])
+  @@map("team_members")
 }

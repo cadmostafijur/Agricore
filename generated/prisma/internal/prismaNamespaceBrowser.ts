@@ -52,7 +52,11 @@ export const AnyNull = runtime.AnyNull
 
 export const ModelName = {
   Role: 'Role',
-  User: 'User'
+  User: 'User',
+  Field: 'Field',
+  Crop: 'Crop',
+  Report: 'Report',
+  TeamMember: 'TeamMember'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -92,6 +96,53 @@ export const UserScalarFieldEnum = {
 } as const
 
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
+
+
+export const FieldScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  area_ha: 'area_ha',
+  district: 'district',
+  user_id: 'user_id',
+  created_at: 'created_at'
+} as const
+
+export type FieldScalarFieldEnum = (typeof FieldScalarFieldEnum)[keyof typeof FieldScalarFieldEnum]
+
+
+export const CropScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  field_id: 'field_id',
+  status: 'status',
+  planted_at: 'planted_at'
+} as const
+
+export type CropScalarFieldEnum = (typeof CropScalarFieldEnum)[keyof typeof CropScalarFieldEnum]
+
+
+export const ReportScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  type: 'type',
+  field_id: 'field_id',
+  user_id: 'user_id',
+  created_at: 'created_at'
+} as const
+
+export type ReportScalarFieldEnum = (typeof ReportScalarFieldEnum)[keyof typeof ReportScalarFieldEnum]
+
+
+export const TeamMemberScalarFieldEnum = {
+  id: 'id',
+  owner_id: 'owner_id',
+  email: 'email',
+  name: 'name',
+  role: 'role',
+  created_at: 'created_at'
+} as const
+
+export type TeamMemberScalarFieldEnum = (typeof TeamMemberScalarFieldEnum)[keyof typeof TeamMemberScalarFieldEnum]
 
 
 export const SortOrder = {

@@ -51,3 +51,23 @@ export type Role = Prisma.RoleModel
  * 
  */
 export type User = Prisma.UserModel
+/**
+ * Model Field
+ * 
+ */
+export type Field = Prisma.FieldModel
+/**
+ * Model Crop
+ * 
+ */
+export type Crop = Prisma.CropModel
+/**
+ * Model Report
+ * 
+ */
+export type Report = Prisma.ReportModel
+/**
+ * Model TeamMember
+ * 
+ */
+export type TeamMember = Prisma.TeamMemberModel

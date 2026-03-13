@@ -10,4 +10,8 @@
  */
 export type * from './models/Role'
 export type * from './models/User'
+export type * from './models/Field'
+export type * from './models/Crop'
+export type * from './models/Report'
+export type * from './models/TeamMember'
 export type * from './commonInputTypes'
