@@ -53,7 +53,7 @@ passport.use(
           });
         }
 
-        return done(null, user);
+        return done(null, user as unknown as Express.User);
       } catch (error) {
         return done(error as Error, undefined);
       }

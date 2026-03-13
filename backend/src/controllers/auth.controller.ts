@@ -91,7 +91,7 @@ export const getMe = async (
 // ─── GET /api/auth/google/callback ───────────────────────────
 export const googleCallback = (req: Request, res: Response): void => {
   try {
-    const oauthUser = req.user as {
+    const oauthUser = req.user as unknown as {
       id: number;
       email: string;
       role_id: number;
